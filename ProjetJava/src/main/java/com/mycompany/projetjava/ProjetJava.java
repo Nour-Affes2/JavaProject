@@ -43,70 +43,63 @@ public class ProjetJava {
 
         // menu
         Scanner scanner = new Scanner(System.in);
-        int c1, c2 = 0, c3 = 0;
-       
-        
-        System.out.println("**********************");
+        Type T = new Type();
+        Produit p = new Produit();
+        int c1, c2=0, c3=0, mois, annee;
+
+                System.out.println("**********************");
         System.out.println("*******      Bienvenue      ********");
         System.out.println("**********************");
         
         do {
             c1 = Menu.displayMenu(scanner);
             switch (c1) {
-                case 1:
+                case 1 -> {
                     do {
                         c2 = Menu.displayMenuGestion(scanner);
                         switch (c2) {
-                            case 1:
+                            case 1 -> {
                                 do {
                                     c3 = Menu.displayGestionCategories(scanner);
                                     switch (c3) {
-                                        case 1:
+                                        case 1 -> {
                                             Categorie c=new Categorie(2,"rrr");
                                             Categorie.AjouterCat(nbCat,c,TabCat);
-                                            break;
-                                        case 2:
-                                            Categorie.supprimerCat(TabCat,nbCat,TabType,nbTyp,2);                                            break;
-                                        case 3:
-                                            break;
-                                        case 4:
-                                            break;
-                                        default:
-                                            System.out.println("*******      Au revoir!     ********");
-                                            break;
+                                        }
+                                        case 2 -> Categorie.supprimerCat(TabCat,nbCat,TabType,nbTyp,2);
+                                        case 3 -> {
+                                        }
+                                        case 4 -> {
+                                        }
+                                        default -> System.out.println("*******      Au revoir!     ********");
                                     }
                                 } while (c3 != 0 && c3 != 3 && c3 != 4);
-                                break;
-                            case 2:
+                            }
+                            case 2 -> {
                                 do {
                                     c3 = Menu.displayGestionTypes(scanner);
                                     switch (c3) {
-                                        case 1:
-                                            //ajouterType(TabType, NbType, TabCat, NbCat, TabQte);
-                                            break;
-                                        case 2:
-                                            //supprimerType(TabType, NbType, TabQte);
-                                            break;
-                                        case 3:
-                                            break;
-                                        case 4:
-                                            break;
-                                        default:
-                                            System.out.println("*******      Au revoir!     ********");
-                                            break;
+                                        case 1 -> Type.AjouterType(T,TabType, nbTyp, TabCat, nbCat, TabQte,scanner);
+                                        case 2 -> Type.SupprimerType(TabType, nbTyp, TabQte,scanner);
+                                        case 3 -> {
+                                        }
+                                        case 4 -> {
+                                        }
+                                        default -> System.out.println("*******      Au revoir!     ********");
                                     }
                                 } while (c3 != 0 && c3 != 3 && c3 != 4);
-                                break;
-                            case 3:
+                            }
+                            case 3 -> {
                                 do {
                                     c3 = Menu.displayGestionProduits(scanner);
                                     switch (c3) {
                                         case 1:
-                                            //ajouterPdt(Stock, TabType, NbType, TabQte);
+                                            Produit.initPdt(p, nbTyp, TabType, TabQte);
+                                            Produit.ajouterPdt(p,nbTyp,TabType,TabQte,Stock);
                                             break;
                                         case 2:
-                                            //initPdt();
-                                            //supprimerPdt(Stock, TabQte);
+                                            Produit.initPdt(p, nbTyp, TabType, TabQte);
+                                            Produit.SupprimerPdt(Stock,TabQte,p,TabType,nbTyp);
                                             break;
                                         case 3:
                                             break;
@@ -117,56 +110,48 @@ public class ProjetJava {
                                             break;
                                     }
                                 } while (c3 != 0 && c3 != 3 && c3 != 4);
-                                break;
-                            case 4:
+                            }
+                            case 4 -> {
                                 Menu.afficherStock(TabCat, nbCat, TabType, nbTyp, TabQte, Stock);
-                                break;
-                            case 5:
-                                break;
-                            default:
-                                System.out.println("*******      Au revoir!     ********");
-                                break;
+                            }
+                            case 5 -> {
+                            }
+                            default -> System.out.println("*******      Au revoir!     ********");
                         }
                     } while (c2 != 0 && c2 != 5 && c3 != 0 && c3 != 4);
-                    break;
-                case 2:
+                 }
+                case 2 -> {
                     do {
                         c2 = Menu.displayMenuVenteStat(scanner);
                         switch (c2) {
-                            case 1:
-                               // vendrePdt(TabType, NbType, TabQte, Stock);
-                                break;
-                            case 2:
-                               /* do {
+                            case 1 -> Menu.VendrePdt(TabType, nbTyp, TabQte, Stock);
+                            case 2 -> {
+                                do {
                                     System.out.println("*  Choisir le mois                                           *");
                                     System.out.println("01-Janvier\t02-Fevrier\t03-Mars\t04-Avril\t05-Mai\t06-Juin");
                                     System.out.println("07-Juillet\t08-Aout\t09-Septembre\t10-Octobre\t11-Novembre\t12-Decembre");
-                                    //mois = scanner.nextInt();
+                                    mois = scanner.nextInt();
                                 } while (mois < 1 || mois > 12);
                                 do {
                                     System.out.println("* Choisir l'annee                                            * ");
                                     annee = scanner.nextInt();
                                 } while (annee < 1980 || annee > 2080);
-                                //statMois(mois, annee, TabCat, nbCat);*/
-                                break;
-                            case 3:
-                               /* do {
+                                Menu.StatMois(mois, annee, TabCat, nbCat);
+                            }
+                            case 3 -> {
+                                do {
                                     System.out.println("* Choisir l'annee                                            * ");
                                     annee = scanner.nextInt();
                                 } while (annee < 1980 || annee > 2080);
-                                statAnnee(annee, TabCat, nbCat);*/
-                                break;
-                            case 4:
-                                break;
-                            default:
-                                System.out.println("*******      Au revoir!     ********");
-                                break;
+                                Menu.StatAnnee(annee, TabCat, nbCat);
+                            }
+                            case 4 -> {
+                            }
+                            default -> System.out.println("*******      Au revoir!     ********");
                         }
                     } while (c2 != 0 && c2 != 4);
-                    break;
-                default:
-                    System.out.println("*******      Au revoir!     ********");
-                    break;
+                 }
+                default -> System.out.println("*******      Au revoir!     ********");
             }
         } while (c1 != 0 && c2 != 0 && c3 != 0);
         

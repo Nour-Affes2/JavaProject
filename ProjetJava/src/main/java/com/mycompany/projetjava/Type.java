@@ -91,27 +91,27 @@ public class Type {
         }
     }
     
-    public static void SupprimerType(Type[] TabType, int[] NbType, int[] TabQte, Scanner scanner) {
+    public static void SupprimerType(Type[] TabType, int NbType, int[] TabQte, Scanner scanner) {
         System.out.println("* Quelle type souhaitez-vous supprimer?                       *");
 
-        for (int i = 0; i < NbType[0]; i++) {
+        for (int i = 0; i < NbType; i++) {
             System.out.printf("%d-%s\t", TabType[i].idType, TabType[i].nomType);
         }
         System.out.println();
 
         int idType = scanner.nextInt();
         int i = 0;
-        while (i < NbType[0] && TabType[i].idType != idType) {
+        while (i < NbType && TabType[i].idType != idType) {
             i++;
         }
 
-        if (i < NbType[0]) {
+        if (i < NbType) {
             if (TabQte[i] == 0) {
-                for (; i < NbType[0] - 1; i++) {
+                for (; i < NbType - 1; i++) {
                     TabType[i] = TabType[i + 1];
                     TabQte[i] = TabQte[i + 1];
                 }
-                NbType[0]--;
+                NbType--;
                 System.out.println("***************         Type supprime         ****************");
             } else {
                 System.out.println("*   Il existe des produits ayant ce type                     *");

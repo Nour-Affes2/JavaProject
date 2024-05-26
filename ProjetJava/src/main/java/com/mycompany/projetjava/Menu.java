@@ -4,6 +4,11 @@
  */
 package com.mycompany.projetjava;
 import java.util.Scanner;
+import java.io.BufferedWriter;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.IOException;
 /**
  *
  * @author noura
@@ -113,5 +118,170 @@ public class Menu {
             c = scanner.nextInt();
         } while (c != 1 && c != 2 && c != 0);
         return c;
+    }
+
+    public static void VendrePdt(Type[] TabType, int NbType, int[] TabQte, Produit[][] Stock) {
+        Scanner scanner = new Scanner(System.in);
+        int i, j, idType, iMin = 0;
+        Produit min;
+        MaDate DateVente = new MaDate();
+        
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("Trace.txt", true))) {
+            System.out.println("* Quel type de produit voudriez-vous vendre?                 *");
+            for (i = 0; i < NbType; i++) {
+                System.out.printf("%d-%s\t", TabType[i].idType, TabType[i].nomType);
+            }
+            System.out.println();
+            
+            idType = scanner.nextInt();
+            
+            i = 0;
+            while (i < NbType && TabType[i].idType != idType) {
+                i++;
+            }
+            
+            if (i == NbType) {
+                System.out.println("Type de produit non trouvé");
+                return;
+            }
+            
+            if (TabQte[i] == 0) {
+                System.out.println("Aucun produit disponible pour ce type");
+                return;
+            }
+            
+            min = Stock[0][i];
+            
+            for (j = 1; j < TabQte[i]; j++) {
+                if (Stock[j][i].getDate_expiration().getAA() < min.getDate_expiration().getAA()) {
+                    min = Stock[j][i];
+                    iMin = j;
+                } else if (Stock[j][i].getDate_expiration().getAA() == min.getDate_expiration().getAA()) {
+                    if (Stock[j][i].getDate_expiration().getMM() < min.getDate_expiration().getMM()) {
+                        min = Stock[j][i];
+                        iMin = j;
+                    } else if (Stock[j][i].getDate_expiration().getMM() == min.getDate_expiration().getMM()) {
+                        if (Stock[j][i].getDate_expiration().getJJ() < min.getDate_expiration().getJJ()) {
+                            min = Stock[j][i];
+                            iMin = j;
+                        }
+                    }
+                }
+            }
+            
+            System.out.println("*  Date de vente:                                            *");
+            MaDate.InitDate(DateVente,scanner);
+            writer.write(String.format("%d\t%s\t%d\t%s\t%d\t%s\t%d/%d/%d\n", 
+                    min.getId(), min.Nom, min.getTyp().idType, min.getTyp().nomType, min.getTyp().cat.idCat, min.getTyp().cat.nomCat, DateVente.getJJ(), DateVente.getMM(), DateVente.getAA()));
+            
+            for (j = iMin; j < TabQte[i] - 1; j++) {
+                Stock[j][i] = Stock[j + 1][i];
+            }
+            
+            TabQte[i]--;
+            System.out.println("*************        Vente effectuee       ****************");
+        } catch (IOException e) {
+            System.out.println("Erreur lors de l'ouverture du fichier Trace.txt");
+        }
+    }
+        
+    public static void StatMois(int mois, int annee, Categorie[] TabCat, int NbCat) {
+        int i, j, nvTotal = 0;
+        int[] nvCat = new int[20];
+        Produit p = new Produit();
+
+        for (i = 0; i < NbCat; i++) {
+            nvCat[i] = 0;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("Trace.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("\\t|/");
+                p.setId(Integer.parseInt(parts[0]));
+                p.Nom = parts[1];
+                p.Typ = new Type();
+                p.Typ.idType = Integer.parseInt(parts[2]);
+                p.Typ.nomType = parts[3];
+                p.Typ.cat = new Categorie();
+                p.Typ.cat.idCat = Integer.parseInt(parts[4]);
+                p.Typ.cat.nomCat = parts[5];
+                p.Date_expiration = new MaDate();
+                p.Date_expiration.setJJ(Integer.parseInt(parts[6]));
+                p.Date_expiration.setMM(Integer.parseInt(parts[7]));
+                p.Date_expiration.setAA(Integer.parseInt(parts[8]));
+
+                if (p.Date_expiration.getMM() == mois && p.Date_expiration.getAA() == annee) {
+                    nvTotal++;
+                    j = 0;
+                    while (j < NbCat && TabCat[j].idCat != p.Typ.cat.idCat) {
+                        j++;
+                    }
+                    if (j < NbCat) {
+                        nvCat[j]++;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Erreur lors de l'ouverture du fichier Trace.txt");
+        }
+
+        System.out.printf("*  Nombre de ventes total: %d                                  *\n", nvTotal);
+        for (i = 0; i < NbCat; i++) {
+            System.out.printf("*  Nombre de ventes pour la categorie %s: %d                   *\n", TabCat[i].nomCat, nvCat[i]);
+        }
+    }
+        public static void StatAnnee(int annee, Categorie[] TabCat, int NbCat) {
+        int i, j, nvTotal = 0;
+        int[] nvCat = new int[20];
+        Produit p;
+
+        for (i = 0; i < NbCat; i++) {
+            nvCat[i] = 0;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("Trace.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("\\t|/");
+                p = new Produit();
+                p.id = Integer.parseInt(parts[0]);
+                p.Nom = parts[1];
+                p.Typ = new Type();
+                p.Typ.idType = Integer.parseInt(parts[2]);
+                p.Typ.nomType = parts[3];
+                p.Typ.cat = new Categorie();
+                p.Typ.cat.idCat = Integer.parseInt(parts[4]);
+                p.Typ.cat.nomCat = parts[5];
+                p.Date_expiration = new MaDate();
+                p.Date_expiration.setJJ(Integer.parseInt(parts[6]));
+                p.Date_expiration.setMM(Integer.parseInt(parts[7]));
+                p.Date_expiration.setAA(Integer.parseInt(parts[8]));
+
+                if (p.Date_expiration.getAA() == annee) {
+                    nvTotal++;
+                    j = 0;
+                    while (j < NbCat && TabCat[j].idCat != p.Typ.cat.idCat) {
+                        j++;
+                    }
+                    if (j < NbCat) {
+                        nvCat[j]++;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Erreur lors de l'ouverture du fichier Trace.txt");
+        }
+
+        System.out.printf("*  Nombre de ventes total: %d                                  *\n", nvTotal);
+        for (i = 1; i < NbCat; i++) {
+            System.out.printf("*  Nombre de ventes pour la categorie %s: %d                   *\n", TabCat[i].nomCat, nvCat[i]);
+        }
+
+        for (i = 0; i < 13; i++) {
+            System.out.println("**************************************************************");
+            System.out.printf("*      Statistiques du mois %2d                               *\n", i);
+            StatMois(i, annee, TabCat, NbCat);
+        }
     }
 }

@@ -6,7 +6,7 @@ package com.mycompany.projetjava;
 import java.util.Scanner;
 
 public class Produit {
-    private int id ;
+    int id ;
     String  Nom;
     Type Typ ;
     MaDate Date_expiration ;
@@ -120,7 +120,7 @@ public class Produit {
             System.out.println("Le type du produit n'existe pas dans TabType");
         }
     }
- public static void supprimerPdt(int idProduit, int idType, int nbTyp, Type[] tabType, int[] tabQte, Produit[][] stock) {
+ /*public static void supprimerPdt(int idProduit, int idType, int nbTyp, Type[] tabType, int[] tabQte, Produit[][] stock) {
         int indiceType = -1;
         for (int i = 0; i < nbTyp; ++i) {
             if (tabType[i].getIdType() == idType) {
@@ -163,4 +163,30 @@ public class Produit {
         }
         return (l == qte) ? 0 : 1;
     }
+*/
+   public static void SupprimerPdt(Produit[][] stock, int[] tabQte, Produit pdt, Type[] tabType, int nbType) {
+        int i = 0, j = 0;
+        i = Type.TypeExiste(tabType, nbType, pdt.Typ);
+
+        if (i != -1) {
+            if (tabQte[i] >= 10) {
+                while (j < tabQte[i] && stock[j][i].id != pdt.id) {
+                    j++;
+                }
+                if (j != tabQte[i]) {
+                    for (; j < tabQte[i] - 1; j++) {
+                        stock[j][i] = stock[j + 1][i];
+                    }
+                    tabQte[i]--;
+                    System.out.println("***********       Produit supprime        **************");
+                } else {
+                    System.out.println("***********      Produit inexistant       **************");
+                }
+            } else {
+                System.out.println("*   Le nb de produit minimum est atteint                    *");
+            }
+        } else {
+            System.out.println("*   Produit errone                                           *");
+        }
+}
 }
